@@ -5,6 +5,9 @@
   "author": "jobn123 <jobn_joy@163.com>",
   "homepage": "",
   "license": "ISC",
+  "bin": {
+    "tyo-cli": "bin/index.js"
+  },
   "main": "lib/core.js",
   "directories": {
     "lib": "lib",
