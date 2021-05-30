@@ -1,0 +1,22 @@
+{
+  "name": "@tyo-cli/utils",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "author": "jobn123 <jobn_joy@163.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/utils.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org/"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}
