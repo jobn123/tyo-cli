@@ -5,6 +5,7 @@ module.exports = core;
 const path = require('path');
 const semver = require('semver');
 const log = require('@tyo-cli/log');
+
 const colors = require('colors/safe');
 const userHome = require('user-home');
 const pathExists = require('path-exists').sync;
@@ -20,6 +21,7 @@ function core() {
         checkUserHome();
         checkInputArgs();
         checkEnv();
+        checkGlobalUpdate();
         // log.verbose('debug', 'test debug');
     } catch (error) {
         log.error(error.message);
@@ -90,4 +92,16 @@ function createDefaultConfig() {
     }
 
     process.env.CLI_HOME_PATH = cliConfig.cliHome;
+}
+
+async function checkGlobalUpdate() {
+    const { version, name } = pkg
+    const { getNpmSemverVersion } = require('@tyo-cli/get-npm-info');
+
+    const lastVersion = await getNpmSemverVersion(version, name);
+
+    if (lastVersion && semver.gt(lastVersion, version)) {
+        log.warn(colors.yellow(`please update to latest version ${name}， current version: ${version}，latest version: ${lastVersion}
+            更新命令： npm install -g ${name}`));
+    }
 }
