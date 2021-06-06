@@ -17,10 +17,18 @@
     "lib"
   ],
   "publishConfig": {
-    "registry": "http://registry.npmjs.org/",
     "access": "public"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@tyo-cli/log": "file:../../utils/log",
+    "@tyo-cli/utils": "file:../../utils/utils",
+    "colors": "^1.4.0",
+    "import-local": "^3.0.2",
+    "npmlog": "^4.1.2",
+    "root-check": "^1.0.0",
+    "semver": "^7.3.5"
   }
 }
