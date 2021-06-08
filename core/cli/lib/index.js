@@ -9,9 +9,12 @@ const log = require('@tyo-cli/log');
 const colors = require('colors/safe');
 const userHome = require('user-home');
 const pathExists = require('path-exists').sync;
+const commaner = require('commander');
 
 const constract = require('./const');
 const pkg = require('../package.json');
+
+const program = new commaner.Command();
 
 function core() {
     try {
@@ -19,9 +22,10 @@ function core() {
         checkNodeVersion();
         checkRoot();
         checkUserHome();
-        checkInputArgs();
+        // checkInputArgs();
         checkEnv();
         checkGlobalUpdate();
+        registerCommand();
         // log.verbose('debug', 'test debug');
     } catch (error) {
         log.error(error.message);
@@ -77,7 +81,7 @@ function checkEnv() {
 
     createDefaultConfig();
 
-    log.verbose('环境变量', process.env.CLI_HOME_PATH);
+    // log.verbose('环境变量', process.env.CLI_HOME_PATH);
 }
 
 function createDefaultConfig() {
@@ -103,5 +107,38 @@ async function checkGlobalUpdate() {
     if (lastVersion && semver.gt(lastVersion, version)) {
         log.warn(colors.yellow(`please update to latest version ${name}， current version: ${version}，latest version: ${lastVersion}
             更新命令： npm install -g ${name}`));
+    }
+}
+
+function registerCommand() {
+    program
+        .name(Object.keys(pkg.bin)[0])
+        .usage('<command> [options]')
+        .version(pkg.version)
+        .option('-d, --debug', 'debug mode', false);
+
+    // listen debug mode
+    program.on('option:debug', function() {
+        process.env.LOG_LEVEL = 'verbose';
+        log.level = process.env.LOG_LEVEL;
+        log.verbose('test');
+    });
+
+    // unknow commands
+    program.on('command:*', function (operands) {
+        console.log(colors.red(`error: unknown command '${operands[0]}'`));
+        const availableCommands = program.commands.map(cmd => cmd.name());
+
+        if (availableCommands.length) {
+            console.log(colors.red(`avaliableCommands: ${availableCommands.join(',')}`))
+        }
+    });
+
+    program.parse(process.argv);
+
+    // print help info
+    if (program.args && program.args.length < 1) {
+        program.outputHelp();
+        console.log();
     }
 }

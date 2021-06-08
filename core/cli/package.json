@@ -1,6 +1,6 @@
 {
   "name": "@tyo-cli/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "core",
   "author": "jobn123 <jobn_joy@163.com>",
   "homepage": "",
@@ -27,6 +27,7 @@
     "@tyo-cli/log": "file:../../utils/log",
     "@tyo-cli/utils": "file:../../utils/utils",
     "colors": "^1.4.0",
+    "commander": "^7.2.0",
     "dotenv": "^10.0.0",
     "import-local": "^3.0.2",
     "minimist": "^1.2.5",

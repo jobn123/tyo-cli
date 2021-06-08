@@ -5,7 +5,7 @@ const semver = require('semver');
 const urlJoin = require('url-join');
 
 function getNpmInfo(npmName, registry) {
-    console.log(npmName);
+    // console.log(npmName);
     if (!npmName) {
         return null;
     }
@@ -41,7 +41,7 @@ function getSemverVersions(baseVersion, versions) {
 async function getNpmSemverVersion(baseVersion, npmName, registry) {
     const versions = await getNpmVersions(npmName, registry);
     const newVersions = getSemverVersions(baseVersion, versions);
-    console.log(newVersions);
+    // console.log(newVersions);
     if (newVersions && newVersions.length) {
         return newVersions[0];
     }
