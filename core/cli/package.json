@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@tyo-cli/get-npm-info": "file:../../utils/get-npm-info",
+    "@tyo-cli/init": "file:../../commands/init",
     "@tyo-cli/log": "file:../../utils/log",
     "@tyo-cli/utils": "file:../../utils/utils",
     "colors": "^1.4.0",

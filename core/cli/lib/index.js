@@ -5,11 +5,13 @@ module.exports = core;
 const path = require('path');
 const semver = require('semver');
 const log = require('@tyo-cli/log');
+const init = require('@tyo-cli/init');
 
 const colors = require('colors/safe');
 const userHome = require('user-home');
 const pathExists = require('path-exists').sync;
 const commaner = require('commander');
+
 
 const constract = require('./const');
 const pkg = require('../package.json');
@@ -116,6 +118,11 @@ function registerCommand() {
         .usage('<command> [options]')
         .version(pkg.version)
         .option('-d, --debug', 'debug mode', false);
+
+    program
+        .command('init [projectName]')
+        .option('-f, --force', '是否强制初始化项目')
+        .action(init);
 
     // listen debug mode
     program.on('option:debug', function() {
