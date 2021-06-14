@@ -23,6 +23,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@tyo-cli/exec": "file:../exec",
     "@tyo-cli/get-npm-info": "file:../../utils/get-npm-info",
     "@tyo-cli/init": "file:../../commands/init",
     "@tyo-cli/log": "file:../../utils/log",
@@ -31,7 +32,6 @@
     "commander": "^7.2.0",
     "dotenv": "^10.0.0",
     "import-local": "^3.0.2",
-    "minimist": "^1.2.5",
     "npmlog": "^4.1.2",
     "path-exists": "^4.0.0",
     "root-check": "^1.0.0",

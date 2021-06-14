@@ -6,6 +6,7 @@ const path = require('path');
 const semver = require('semver');
 const log = require('@tyo-cli/log');
 const init = require('@tyo-cli/init');
+const exec = require('@tyo-cli/exec');
 
 const colors = require('colors/safe');
 const userHome = require('user-home');
@@ -18,17 +19,10 @@ const pkg = require('../package.json');
 
 const program = new commaner.Command();
 
-function core() {
+async function core() {
     try {
-        checkPkgVersion();
-        checkNodeVersion();
-        checkRoot();
-        checkUserHome();
-        // checkInputArgs();
-        checkEnv();
-        checkGlobalUpdate();
+        await prepare();
         registerCommand();
-        // log.verbose('debug', 'test debug');
     } catch (error) {
         log.error(error.message);
     }
@@ -56,21 +50,6 @@ function checkUserHome() {
     if (!userHome || !pathExists(userHome)) {
         throw new Error(colors.red('当前登录用户主目录不存在！'));
     }
-}
-
-function checkInputArgs() {
-    const minimist = require('minimist');
-    const args = minimist(process.argv.slice(2));
-    checkArgs(args)
-}
-
-function checkArgs(args) {
-    if (args.debug) {
-        process.env.LOG_LEVEL = 'verbose';
-    } else {
-        process.env.LOG_LEVEL = 'info';
-    }
-    log.level = process.env.LOG_LEVEL;
 }
 
 function checkEnv() {
@@ -117,18 +96,24 @@ function registerCommand() {
         .name(Object.keys(pkg.bin)[0])
         .usage('<command> [options]')
         .version(pkg.version)
-        .option('-d, --debug', 'debug mode', false);
+        .option('-d, --debug', 'debug mode', false)
+        .option('-tp, --targetPath <targetPath>', '指定本地调试文件路径', '');
 
     program
         .command('init [projectName]')
         .option('-f, --force', '是否强制初始化项目')
-        .action(init);
+        .action(exec);
 
     // listen debug mode
-    program.on('option:debug', function() {
+    program.on('option:debug', function () {
         process.env.LOG_LEVEL = 'verbose';
         log.level = process.env.LOG_LEVEL;
-        log.verbose('test');
+        // log.verbose('test');
+    });
+
+    // targetpath
+    program.on('option:targetPath', function (targetPath) {
+        process.env.CLI_TARGET_PATH = targetPath;
     });
 
     // unknow commands
@@ -148,4 +133,13 @@ function registerCommand() {
         program.outputHelp();
         console.log();
     }
+}
+
+async function prepare() {
+    checkPkgVersion();
+    checkNodeVersion();
+    checkRoot();
+    checkUserHome();
+    checkEnv();
+    checkGlobalUpdate();
 }
