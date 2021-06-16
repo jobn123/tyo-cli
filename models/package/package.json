@@ -27,6 +27,9 @@
     "url": "https://github.com/jobn123/tyo-cli/issues"
   },
   "dependencies": {
-    "@tyo-cli/utils": "file:../../utils/utils"
+    "@tyo-cli/get-npm-info": "file:../../utils/get-npm-info",
+    "@tyo-cli/utils": "file:../../utils/utils",
+    "npminstall": "^4.11.0",
+    "pkg-dir": "^5.0.0"
   }
 }
