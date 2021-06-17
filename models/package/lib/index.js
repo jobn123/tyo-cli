@@ -3,6 +3,7 @@ const path = require('path');
 const npminstall = require('npminstall');
 const pkgDir = require('pkg-dir').sync;
 const pathExists = require('path-exists').sync;
+const fse = require('fs-extra');
 
 const { isObject, fomartPath } = require('@tyo-cli/utils');
 const { getDefaultRegistry, getNpmLatestVersion } = require('@tyo-cli/get-npm-info')
@@ -22,6 +23,9 @@ class Package {
   }
 
   async prepare() {
+    if (this.storeDir && !pathExists(this.storeDir)) {
+      fse.mkdirSync(this.storeDir);
+    }
     if (this.packageVersion === 'latest') {
       this.packageVersion = await getNpmLatestVersion(this.packageName)
     }
@@ -30,6 +34,11 @@ class Package {
   get cacheFilePath() {
     const cacheFilePathPrefix = this.packageName.replace('/', '_');
     return path.resolve(this.storeDir, `_${cacheFilePathPrefix}@${this.packageVersion}@${this.packageName}`);
+  }
+
+  get getSpecificCacheFilePath(packageVersion) {
+    const cacheFilePathPrefix = this.packageName.replace('/', '_');
+    return path.resolve(this.storeDir, `_${cacheFilePathPrefix}@${packageVersion}@${this.packageName}`);
   }
 
   async exists() {
@@ -50,11 +59,24 @@ class Package {
       pkgs: [
         { name: this.packageName, version: this.packageVersion }
       ]
-    })
+    });
   }
 
-  update() {
+  async update() {
+    await this.prepare();
+    const latestPackageVersion = await getNpmLatestVersion(this.packageName);
+    const latestFilePath = this.getSpecificCacheFilePath(latestPackageVersion);
 
+    if (!pathExists(latestFilePath)) {
+      return npminstall({
+        root: this.targetPath,
+        storeDir: this.storeDir,
+        registry: getDefaultRegistry(),
+        pkgs: [
+          { name: this.packageName, version: latestPackageVersion }
+        ]
+      });
+    }
   }
 
   getRootFilePath() {
