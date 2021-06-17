@@ -2,9 +2,10 @@
 const path = require('path');
 const npminstall = require('npminstall');
 const pkgDir = require('pkg-dir').sync;
+const pathExists = require('path-exists').sync;
 
 const { isObject, fomartPath } = require('@tyo-cli/utils');
-const { getDefaultRegistry } = require('@tyo-cli/get-npm-info')
+const { getDefaultRegistry, getNpmLatestVersion } = require('@tyo-cli/get-npm-info')
 
 class Package {
   constructor(options) {
@@ -12,22 +13,39 @@ class Package {
       throw new Error('Package类的options参数不能为空！');
     }
 
-    const { targetPath, packageName, packageVersion } = options;
+    const { targetPath, packageName, packageVersion, storeDir } = options;
 
     this.targetPath = targetPath;
     this.packageName = packageName;
     this.packageVersion = packageVersion;
-    console.log(options);
+    this.storeDir = storeDir;
   }
 
-  exists(options) {
-
+  async prepare() {
+    if (this.packageVersion === 'latest') {
+      this.packageVersion = await getNpmLatestVersion(this.packageName)
+    }
   }
 
-  install() {
-    npminstall({
+  get cacheFilePath() {
+    const cacheFilePathPrefix = this.packageName.replace('/', '_');
+    return path.resolve(this.storeDir, `_${cacheFilePathPrefix}@${this.packageVersion}@${this.packageName}`);
+  }
+
+  async exists() {
+    if (this.storeDir) {
+      await this.prepare();
+      return pathExists(this.cacheFilePath);
+    } else {
+      return pathExists(this.targetPath)
+    }
+  }
+
+  async install() {
+    await this.prepare();
+    return npminstall({
       root: this.targetPath,
-      storeDir: '',
+      storeDir: this.storeDir,
       registry: getDefaultRegistry(),
       pkgs: [
         { name: this.packageName, version: this.packageVersion }
