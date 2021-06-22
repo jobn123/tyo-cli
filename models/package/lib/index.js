@@ -20,6 +20,7 @@ class Package {
     this.packageName = packageName;
     this.packageVersion = packageVersion;
     this.storeDir = storeDir;
+    this.latestPackageVersion = 'latest';
   }
 
   async prepare() {
@@ -36,9 +37,9 @@ class Package {
     return path.resolve(this.storeDir, `_${cacheFilePathPrefix}@${this.packageVersion}@${this.packageName}`);
   }
 
-  get getSpecificCacheFilePath(packageVersion) {
+  get getSpecificCacheFilePath() {
     const cacheFilePathPrefix = this.packageName.replace('/', '_');
-    return path.resolve(this.storeDir, `_${cacheFilePathPrefix}@${packageVersion}@${this.packageName}`);
+    return path.resolve(this.storeDir, `_${cacheFilePathPrefix}@${this.latestPackageVersion}@${this.packageName}`);
   }
 
   async exists() {
@@ -65,7 +66,8 @@ class Package {
   async update() {
     await this.prepare();
     const latestPackageVersion = await getNpmLatestVersion(this.packageName);
-    const latestFilePath = this.getSpecificCacheFilePath(latestPackageVersion);
+    this.latestPackageVersion = latestPackageVersion;
+    const latestFilePath = this.getSpecificCacheFilePath;
 
     if (!pathExists(latestFilePath)) {
       return npminstall({
@@ -80,15 +82,22 @@ class Package {
   }
 
   getRootFilePath() {
-    const dir = pkgDir(this.targetPath);
-    if (dir) {
-      const pkgFile = require(path.resolve(dir, 'package.json'));
-      if (pkgFile && pkgFile.main) {
-        return fomartPath(path.resolve(dir, pkgFile.main));
+    function _getRootFilePath(targetPath) {
+      const dir = pkgDir(targetPath);
+      if (dir) {
+        const pkgFile = require(path.resolve(dir, 'package.json'));
+        if (pkgFile && pkgFile.main) {
+          return fomartPath(path.resolve(dir, pkgFile.main));
+        }
       }
+      return null;
     }
 
-    return null;
+    if (this.storeDir) {
+      return _getRootFilePath(this.cacheFilePath);
+    } else {
+      return _getRootFilePath(this.targetPath);
+    }
   }
 }
 

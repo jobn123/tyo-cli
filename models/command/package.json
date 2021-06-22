@@ -1,7 +1,7 @@
 {
-  "name": "@tyo-cli/init",
+  "name": "@tyo-cli/command",
   "version": "1.0.0",
-  "description": "init",
+  "description": "command",
   "author": "jobn123 <jobn_joy@163.com>",
   "homepage": "https://github.com/jobn123/tyo-cli#readme",
   "license": "ISC",
@@ -27,6 +27,7 @@
     "url": "https://github.com/jobn123/tyo-cli/issues"
   },
   "dependencies": {
-    "@tyo-cli/command": "file:../../models/command"
+    "colors": "^1.4.0",
+    "semver": "^7.3.5"
   }
 }
