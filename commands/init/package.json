@@ -29,8 +29,10 @@
   "dependencies": {
     "@tyo-cli/command": "file:../../models/command",
     "@tyo-cli/log": "file:../../utils/log",
+    "@tyo-cli/package": "file:../../models/package",
     "fs-extra": "^10.0.0",
     "inquirer": "^8.1.1",
-    "semver": "^7.3.5"
+    "semver": "^7.3.5",
+    "user-home": "^3.0.0"
   }
 }

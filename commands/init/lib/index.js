@@ -1,17 +1,18 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const inquirer = require('inquirer');
 const fse = require('fs-extra');
 
 const semver = require('semver');
+const uesrHome = require('user-home');
 
 const Command = require('@tyo-cli/command');
 const log = require('@tyo-cli/log');
-const { setTimeout } = require('timers');
+const Package = require('@tyo-cli/package');
 
-const TYPE_PROJECT = 'project';
-const TYPE_COMPONENT = 'component';
+const template = ['vue2', 'vue-element-admin', 'react', 'umi', 'eggjs'];
 
 class InitCommand extends Command {
     init() {
@@ -25,15 +26,42 @@ class InitCommand extends Command {
     async exec() {
         try {
             // 准备阶段
-            const ret = await this.prepare();
+            const projectInfo = await this.prepare();
 
-            if (ret) {
+            if (projectInfo) {
                 // 下载模板
                 // 安装模板
+                log.verbose('projectInfo', projectInfo);
+                await this.downloadTemplate(projectInfo);
             }
 
         } catch (e) {
             log.error(e.message);
+        }
+    }
+
+    // 下载项目模板
+    async downloadTemplate(projectInfo) {
+
+        const targetPath = path.resolve(uesrHome, '.tyo-cli', 'template');
+        const storeDir = path.resolve(uesrHome, '.tyo-cli', 'template', 'node_modules');
+        console.log(targetPath, storeDir);
+
+        const { projectTemplate } = projectInfo;
+
+        const templateNpm = new Package({
+            targetPath,
+            storeDir,
+            packageName: `@tyo-cli/tyo-cli-template-${projectTemplate}`,
+            packageVersion: 'latest'
+        });
+
+        if (!await templateNpm.exists()) {
+            await templateNpm.install();
+            log.success('模板下载成功');
+        } else {
+            await templateNpm.update();
+            log.success('模板下载成功');
         }
     }
 
@@ -70,74 +98,62 @@ class InitCommand extends Command {
             }
         }
         // 是否启动强制更新
-        this.getProjectInfo();
+        return await this.getProjectInfo();
     }
 
-
     async getProjectInfo() {
-        const projectInfo = {};
-        // 选择创建项目、组件
-        const { type } = await inquirer.prompt({
-            type: 'list',
-            name: 'type',
-            message: '请选择初始化类型',
-            default: TYPE_PROJECT,
-            choices: [{
-                name: '项目',
-                value: TYPE_PROJECT
-            }, {
-                name: '组件',
-                value: TYPE_COMPONENT
-            }]
-        });
+        let projectInfo = {};
 
-        log.verbose('type:', type);
-
-        if (type === TYPE_PROJECT) {
-            const o = await inquirer.prompt([{
-                type: 'input',
-                name: 'projectName',
-                message: '请输入项目名称',
-                default: '',
-                validate: function (v) {
-                    const done = this.async();
-                    setTimeout(() => {
-                        if (!/^[a-zA-Z]+([-][a-zA-Z][a-zA-Z0-9]*|[_][a-zA-Z][a-zA-Z0-9]*|[a-zA-Z0-9])*$/.test(v)) {
-                            done("请输入合法的项目名称");
-                            return;
-                        }
-                        done(null, true);
-                    }, 0);
-                },
-                filter: function (v) {
-                    return v;
-                },
-            }, {
-                type: 'input',
-                name: 'projectVersion',
-                message: '请输入项目版本号',
-                default: '1.0.0',
-                validate: function (v) {
-                    const done = this.async();
-                    setTimeout(() => {
-                        if (!(!!semver.valid(v))) {
-                            done("请输入合法的版本号");
-                            return;
-                        }
-                        done(null, true);
-                    }, 0);
-                },
-                filter: function (v) {
-                    if (!!semver.valid(v)) {
-                        return semver.valid(v)
+        let project = await inquirer.prompt([{
+            type: 'input',
+            name: 'projectName',
+            message: '请输入项目名称',
+            default: '',
+            validate: function (v) {
+                const done = this.async();
+                setTimeout(() => {
+                    if (!/^[a-zA-Z]+([-][a-zA-Z][a-zA-Z0-9]*|[_][a-zA-Z][a-zA-Z0-9]*|[a-zA-Z0-9])*$/.test(v)) {
+                        done("请输入合法的项目名称");
+                        return;
                     }
-                    return v;
-                },
-            }]);
-            console.log(o);
-        } else {
+                    done(null, true);
+                }, 0);
+            },
+            filter: function (v) {
+                return v;
+            },
+        }, {
+            type: 'input',
+            name: 'projectVersion',
+            message: '请输入项目版本号',
+            default: '1.0.0',
+            validate: function (v) {
+                const done = this.async();
+                setTimeout(() => {
+                    if (!(!!semver.valid(v))) {
+                        done("请输入合法的版本号");
+                        return;
+                    }
+                    done(null, true);
+                }, 0);
+            },
+            filter: function (v) {
+                if (!!semver.valid(v)) {
+                    return semver.valid(v)
+                }
+                return v;
+            },
+        }, {
+            type: 'list',
+            name: 'projectTemplate',
+            message: '请选择项目模板',
+            choices: template
+        }]);
 
+        projectInfo = {
+            ...project
         }
+
         // 获取项目的基本信息
         return projectInfo;
     }
