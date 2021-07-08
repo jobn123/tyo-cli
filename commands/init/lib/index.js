@@ -7,6 +7,7 @@ const fse = require('fs-extra');
 
 const semver = require('semver');
 const uesrHome = require('user-home');
+const Spinner = require('cli-spinner').Spinner;
 
 const Command = require('@tyo-cli/command');
 const log = require('@tyo-cli/log');
@@ -30,14 +31,42 @@ class InitCommand extends Command {
 
             if (projectInfo) {
                 // 下载模板
-                // 安装模板
                 log.verbose('projectInfo', projectInfo);
                 await this.downloadTemplate(projectInfo);
+                // 安装模板
+                await this.installTemplate(projectInfo);
             }
 
         } catch (e) {
             log.error(e.message);
         }
+    }
+
+    async installTemplate(projectInfo) {
+
+        if (!projectInfo) {
+            throw new Error('项目模板不存在');
+        }
+
+        var spinner = new Spinner('processing.. %s');
+        spinner.setSpinnerString('|/-\\');
+        spinner.start('正在安装模板...');
+
+        try {
+            const templatePath = this.templateNpm.cacheFilePath;
+            const targetPath = process.cwd();
+            console.log(this.templateNpm.cacheFilePath);
+            console.log(targetPath);
+            fse.ensureDirSync(templatePath);
+            fse.ensureDirSync(targetPath);
+            fse.copySync(templatePath, targetPath);
+        } catch (e) {
+            throw e
+        } finally {
+            spinner.stop(true);
+            log.success('模板安装成功');
+        }
+
     }
 
     // 下载项目模板
@@ -63,6 +92,7 @@ class InitCommand extends Command {
             await templateNpm.update();
             log.success('模板下载成功');
         }
+        this.templateNpm = templateNpm;
     }
 
     async prepare() {
