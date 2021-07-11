@@ -5,6 +5,7 @@ const path = require('path');
 const inquirer = require('inquirer');
 const fse = require('fs-extra');
 
+const ejs = require('ejs');
 const semver = require('semver');
 const uesrHome = require('user-home');
 const Spinner = require('cli-spinner').Spinner;
@@ -42,6 +43,20 @@ class InitCommand extends Command {
         }
     }
 
+    async ejsRender(filePath, options) {
+        return new Promise((resolve, reject) => {
+            ejs.renderFile(filePath, options, {}, (err, result) => {
+                console.log(err, result);
+                if (err) {
+                    reject(err);
+                } else {
+                    fse.writeFileSync(filePath, result);
+                    resolve(result);
+                }
+            });
+        });
+    }
+
     async installTemplate(projectInfo) {
 
         if (!projectInfo) {
@@ -52,11 +67,12 @@ class InitCommand extends Command {
         spinner.setSpinnerString('|/-\\');
         spinner.start('正在安装模板...');
 
+        const targetPath = process.cwd();
+
         try {
-            const templatePath = this.templateNpm.cacheFilePath;
-            const targetPath = process.cwd();
-            console.log(this.templateNpm.cacheFilePath);
-            console.log(targetPath);
+            const templatePath = this.templateNpm.cacheFilePath + '/template';
+            // console.log(this.templateNpm.cacheFilePath);
+            // console.log(targetPath);
             fse.ensureDirSync(templatePath);
             fse.ensureDirSync(targetPath);
             fse.copySync(templatePath, targetPath);
@@ -67,14 +83,23 @@ class InitCommand extends Command {
             log.success('模板安装成功');
         }
 
+        const pakJson = targetPath + '/package.json';
+        await this.ejsRender(pakJson, { projectName: projectInfo.ProjectClassName, version: projectInfo.projectVersion });
+        // 模板渲染
+        const pkg = require(pakJson).scripts;
+
+        log.success('Scripts:');
+        Object.keys(pkg).forEach((item) => console.log(item, pkg[item]));
     }
 
     // 下载项目模板
     async downloadTemplate(projectInfo) {
-
+        log.verbose('uesrHome', uesrHome);
         const targetPath = path.resolve(uesrHome, '.tyo-cli', 'template');
         const storeDir = path.resolve(uesrHome, '.tyo-cli', 'template', 'node_modules');
-        console.log(targetPath, storeDir);
+
+        fse.ensureDirSync(targetPath);
+        fse.ensureDirSync(storeDir);
 
         const { projectTemplate } = projectInfo;
 
@@ -90,7 +115,7 @@ class InitCommand extends Command {
             log.success('模板下载成功');
         } else {
             await templateNpm.update();
-            log.success('模板下载成功');
+            log.success('模板更新成功');
         }
         this.templateNpm = templateNpm;
     }
@@ -99,7 +124,6 @@ class InitCommand extends Command {
         const localPath = process.cwd();
         // 判断目录是否为空
         if (!this.isDirEmpty(localPath)) {
-
             let ifContinue = false;
             // 询问是否创建
             if (!this.force) {
@@ -184,6 +208,9 @@ class InitCommand extends Command {
             ...project
         }
 
+        if (projectInfo.projectName) {
+            projectInfo.ProjectClassName = require('kebab-case')(project.projectName).replace(/^-/, '');
+        }
         // 获取项目的基本信息
         return projectInfo;
     }

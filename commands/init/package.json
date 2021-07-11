@@ -31,8 +31,10 @@
     "@tyo-cli/log": "file:../../utils/log",
     "@tyo-cli/package": "file:../../models/package",
     "cli-spinner": "^0.2.10",
+    "ejs": "^3.1.6",
     "fs-extra": "^10.0.0",
     "inquirer": "^8.1.1",
+    "kebab-case": "^1.0.1",
     "semver": "^7.3.5",
     "user-home": "^3.0.0"
   }
