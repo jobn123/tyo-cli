@@ -1,6 +1,6 @@
 {
   "name": "@tyo-cli/core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "core",
   "author": "jobn123 <jobn_joy@163.com>",
   "homepage": "",
@@ -23,11 +23,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@tyo-cli/exec": "^1.0.2",
-    "@tyo-cli/get-npm-info": "^1.0.2",
-    "@tyo-cli/init": "^1.0.2",
-    "@tyo-cli/log": "^1.0.2",
-    "@tyo-cli/utils": "^1.0.2",
+    "@tyo-cli/exec": "^1.0.3",
+    "@tyo-cli/get-npm-info": "^1.0.3",
+    "@tyo-cli/init": "^1.0.3",
+    "@tyo-cli/log": "^1.0.3",
+    "@tyo-cli/utils": "^1.0.3",
     "colors": "^1.4.0",
     "commander": "^7.2.0",
     "dotenv": "^10.0.0",

@@ -1,6 +1,6 @@
 {
   "name": "@tyo-cli/init",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "init",
   "author": "jobn123 <jobn_joy@163.com>",
   "homepage": "https://github.com/jobn123/tyo-cli#readme",
@@ -28,9 +28,9 @@
     "url": "https://github.com/jobn123/tyo-cli/issues"
   },
   "dependencies": {
-    "@tyo-cli/command": "^1.0.2",
-    "@tyo-cli/log": "^1.0.2",
-    "@tyo-cli/package": "^1.0.2",
+    "@tyo-cli/command": "^1.0.3",
+    "@tyo-cli/log": "^1.0.3",
+    "@tyo-cli/package": "^1.0.3",
     "cli-spinner": "^0.2.10",
     "ejs": "^3.1.6",
     "fs-extra": "^10.0.0",

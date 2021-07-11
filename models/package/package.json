@@ -1,6 +1,6 @@
 {
   "name": "@tyo-cli/package",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "package",
   "author": "jobn123 <jobn_joy@163.com>",
   "homepage": "https://github.com/jobn123/tyo-cli#readme",
@@ -28,8 +28,8 @@
     "url": "https://github.com/jobn123/tyo-cli/issues"
   },
   "dependencies": {
-    "@tyo-cli/get-npm-info": "^1.0.2",
-    "@tyo-cli/utils": "^1.0.2",
+    "@tyo-cli/get-npm-info": "^1.0.3",
+    "@tyo-cli/utils": "^1.0.3",
     "fs-extra": "^7.0.1",
     "npminstall": "^4.11.0",
     "path-exists": "^4.0.0",
