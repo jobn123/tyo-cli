@@ -23,11 +23,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@tyo-cli/exec": "file:../exec",
-    "@tyo-cli/get-npm-info": "file:../../utils/get-npm-info",
-    "@tyo-cli/init": "file:../../commands/init",
-    "@tyo-cli/log": "file:../../utils/log",
-    "@tyo-cli/utils": "file:../../utils/utils",
+    "@tyo-cli/exec": "^1.0.2",
+    "@tyo-cli/get-npm-info": "^1.0.2",
+    "@tyo-cli/init": "^1.0.2",
+    "@tyo-cli/log": "^1.0.2",
+    "@tyo-cli/utils": "^1.0.2",
     "colors": "^1.4.0",
     "commander": "^7.2.0",
     "dotenv": "^10.0.0",
@@ -37,5 +37,6 @@
     "root-check": "^1.0.0",
     "semver": "^7.3.5",
     "user-home": "^3.0.0"
-  }
+  },
+  "gitHead": "f74d90b43dbb8538b296c6cf75918c2ba80e9d79"
 }

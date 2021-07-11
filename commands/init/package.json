@@ -27,9 +27,9 @@
     "url": "https://github.com/jobn123/tyo-cli/issues"
   },
   "dependencies": {
-    "@tyo-cli/command": "file:../../models/command",
-    "@tyo-cli/log": "file:../../utils/log",
-    "@tyo-cli/package": "file:../../models/package",
+    "@tyo-cli/command": "^1.0.2",
+    "@tyo-cli/log": "^1.0.2",
+    "@tyo-cli/package": "^1.0.2",
     "cli-spinner": "^0.2.10",
     "ejs": "^3.1.6",
     "fs-extra": "^10.0.0",
@@ -37,5 +37,6 @@
     "kebab-case": "^1.0.1",
     "semver": "^7.3.5",
     "user-home": "^3.0.0"
-  }
+  },
+  "gitHead": "f74d90b43dbb8538b296c6cf75918c2ba80e9d79"
 }
