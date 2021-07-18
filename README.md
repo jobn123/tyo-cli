@@ -16,3 +16,4 @@ tyo-cli init projectName
 # templates
 - vue2
 - vue-element-admin
+- React
